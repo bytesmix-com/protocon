@@ -290,7 +290,7 @@ contract PENToken is ERC20 {
     uint256 public constant initialSupply = 5000000000 * (10 ** uint256(decimals));
     
     constructor(address _init) public {
-        // 0xC2F22fF87568873F8d1551a5Aa2d0b4a7F7963eb        
+
         super._mint(_init, initialSupply);
         owner = msg.sender;
     }
@@ -315,7 +315,7 @@ contract PENToken is ERC20 {
    * It will not be possible to call the functions with the `onlyOwner`
    * modifier anymore.
    */
-    function renounceOwnership() public onlyOwner {
+    function renounceOwnership() external onlyOwner {
         emit OwnershipRenounced(owner);
         owner = address(0);
     }
@@ -324,7 +324,7 @@ contract PENToken is ERC20 {
    * @dev Allows the current owner to transfer control of the contract to a newOwner.
    * @param _newOwner The address to transfer ownership to.
    */
-    function transferOwnership(address _newOwner) public onlyOwner {
+    function transferOwnership(address _newOwner) external onlyOwner {
         _transferOwnership(_newOwner);
     }
 
@@ -363,7 +363,7 @@ contract PENToken is ERC20 {
     /**
     * @dev called by the owner to pause, triggers stopped state
     */
-    function pause() public onlyOwner whenNotPaused {
+    function pause() external onlyOwner whenNotPaused {
         paused = true;
         emit Pause();
     }
@@ -371,7 +371,7 @@ contract PENToken is ERC20 {
     /**
     * @dev called by the owner to unpause, returns to normal state
     */
-    function unpause() public onlyOwner whenPaused {
+    function unpause() external onlyOwner whenPaused {
         paused = false;
         emit Unpause();
     }
@@ -387,17 +387,17 @@ contract PENToken is ERC20 {
         _;
     }
 
-    function freeze(address _target) public onlyOwner {
+    function freeze(address _target) external onlyOwner {
         freezes[_target] = true;
         emit Frozen(_target);
     }
 
-    function unfreeze(address _target) public onlyOwner {
+    function unfreeze(address _target) external onlyOwner {
         freezes[_target] = false;
         emit Unfrozen(_target);
     }
 
-    function isFrozen(address _target) public view returns (bool) {
+    function isFrozen(address _target) external view returns (bool) {
         return freezes[_target];
     }
 
@@ -432,7 +432,7 @@ contract PENToken is ERC20 {
     //burnable
     event Burn(address indexed burner, uint256 value);
 
-    function burn(uint256 _value) public onlyOwner {
+    function burn(uint256 _value) external onlyOwner {
         require(_value <= super.balanceOf(msg.sender), "Balance is too small.");
         
         address _who = msg.sender;
@@ -476,15 +476,15 @@ contract PENToken is ERC20 {
         }
     }
 
-    function lockCount(address _holder) public view returns (uint256) {
+    function lockCount(address _holder) external view returns (uint256) {
         return lockInfo[_holder].length;
     }
 
-    function lockState(address _holder, uint256 _idx) public view returns (uint256, uint256) {
+    function lockState(address _holder, uint256 _idx) external view returns (uint256, uint256) {
         return (lockInfo[_holder][_idx].releaseTime, lockInfo[_holder][_idx].balance);
     }
 
-    function lock(address _holder, uint256 _amount, uint256 _releaseTime) public onlyOwner {
+    function lock(address _holder, uint256 _amount, uint256 _releaseTime) external onlyOwner {
         require(super.balanceOf(_holder) >= _amount, "Balance is too small.");
         _balances[_holder] = _balances[_holder].sub(_amount);
         lockInfo[_holder].push(
@@ -493,7 +493,7 @@ contract PENToken is ERC20 {
         emit Lock(_holder, _amount, _releaseTime);
     }
 
-    function lockAfter(address _holder, uint256 _amount, uint256 _afterTime) public onlyOwner {
+    function lockAfter(address _holder, uint256 _amount, uint256 _afterTime) external onlyOwner {
         require(super.balanceOf(_holder) >= _amount, "Balance is too small.");
         _balances[_holder] = _balances[_holder].sub(_amount);
         lockInfo[_holder].push(
@@ -502,7 +502,7 @@ contract PENToken is ERC20 {
         emit Lock(_holder, _amount, now + _afterTime);
     }
 
-    function unlock(address _holder, uint256 i) public onlyOwner {
+    function unlock(address _holder, uint256 i) external onlyOwner {
         require(i < lockInfo[_holder].length, "No lock information.");
 
         _balances[_holder] = _balances[_holder].add(lockInfo[_holder][i].balance);
@@ -515,7 +515,7 @@ contract PENToken is ERC20 {
         lockInfo[_holder].length--;
     }
 
-    function transferWithLock(address _to, uint256 _value, uint256 _releaseTime) public onlyOwner returns (bool) {
+    function transferWithLock(address _to, uint256 _value, uint256 _releaseTime) external onlyOwner returns (bool) {
         require(_to != address(0), "wrong address");
         require(_value <= super.balanceOf(owner), "Not enough balance");
 
@@ -529,7 +529,7 @@ contract PENToken is ERC20 {
         return true;
     }
 
-    function transferWithLockAfter(address _to, uint256 _value, uint256 _afterTime) public onlyOwner returns (bool) {
+    function transferWithLockAfter(address _to, uint256 _value, uint256 _afterTime) external onlyOwner returns (bool) {
         require(_to != address(0), "wrong address");
         require(_value <= super.balanceOf(owner), "Not enough balance");
 
@@ -543,11 +543,11 @@ contract PENToken is ERC20 {
         return true;
     }
 
-    function currentTime() public view returns (uint256) {
+    function currentTime() external view returns (uint256) {
         return now;
     }
 
-    function afterTime(uint256 _value) public view returns (uint256) {
+    function afterTime(uint256 _value) external view returns (uint256) {
         return now + _value;
     }
 }
