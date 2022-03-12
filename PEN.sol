@@ -282,7 +282,7 @@ contract ERC20 is IERC20 {
     }
 }
 
-contract PENToken is ERC20 {
+contract PEN is ERC20 {
 
     string public constant name = "Protocon";
     string public constant symbol = "PEN";
